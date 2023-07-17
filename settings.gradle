@@ -1,0 +1,6 @@
+rootProject.name = 'silk'
+
+include('payment')
+include('customer')
+include('core')
+include('transaction')
