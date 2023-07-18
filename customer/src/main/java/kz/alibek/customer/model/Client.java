@@ -5,6 +5,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import kz.alibek.core.model.BaseEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
+@Builder
 public class Client extends BaseEntity {
 
   private String firstName;
@@ -24,4 +26,5 @@ public class Client extends BaseEntity {
   private String accountNumber;
   private BigDecimal balance;
   private String currency;
+
 }

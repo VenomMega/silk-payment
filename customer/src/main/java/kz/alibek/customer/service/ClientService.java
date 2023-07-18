@@ -22,11 +22,13 @@ public class ClientService {
 
 
     public void createClient(ClientDto clientDto) {
-        Client client = new Client();
-        client.setFirstName(clientDto.getFirstName());
-        client.setLastName(clientDto.getLastName());
-        client.setBalance(clientDto.getBalance());
-        client.setAccountNumber(IBANGenerator.generateIBAN());
+        Client client = Client.builder()
+                .firstName(clientDto.getFirstName())
+                .lastName(clientDto.getLastName())
+                .balance(clientDto.getBalance())
+                .accountNumber(IBANGenerator.generateIBAN())
+                .currency("KZT")
+                .build();
 
         log.info("[CLIENT] Starting process createClient {}", client);
         clientRepository.save(client);
@@ -47,5 +49,13 @@ public class ClientService {
         Client client = getClientById(id);
         client.setBalance(sum);
         return clientRepository.save(client);
+    }
+
+    public void deleteClient(Long id) {
+        log.info("[CLIENT] deleteClient process started for ID = {} ", id);
+        Client client = getClientById(id);
+        log.info("[CLIENT] getClientById with ID = {}. {}", id, client);
+        clientRepository.delete(client);
+        log.info("[CLIENT] deleteClient process finished");
     }
 }

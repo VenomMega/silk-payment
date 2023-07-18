@@ -3,9 +3,19 @@ spring:
     url: jdbc:postgresql://localhost:54422/silk-payment
     username: postgres
     password: postgres
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+    baseline-on-migrate: true
+    url: jdbc:postgresql://localhost:54422/silk-payment
+    schemas: public
+    user: postgres
+    password: postgres
+    out-of-order: true
+    validate-on-migrate: true
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
@@ -17,6 +27,8 @@ spring:
     port: 54711
     username: guest
     password: guest
+
+
 
   main:
     allow-bean-definition-overriding: true

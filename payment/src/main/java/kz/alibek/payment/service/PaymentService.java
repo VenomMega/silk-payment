@@ -1,7 +1,9 @@
 package kz.alibek.payment.service;
 
+import kz.alibek.core.ExceptionMessage;
 import kz.alibek.customer.model.Client;
 import kz.alibek.payment.config.RabbitConfig;
+import kz.alibek.payment.exception.PaymentException;
 import kz.alibek.payment.model.Payment;
 import kz.alibek.payment.model.PaymentDto;
 import kz.alibek.payment.repository.PaymentRepository;
@@ -30,13 +32,18 @@ public class PaymentService {
         Client sender = customerServiceClient.getClient(paymentDto.getSenderId());
         Client receiver = customerServiceClient.getClient(paymentDto.getReceiverId());
 
-        Payment payment = new Payment();
-        payment.setSenderId(paymentDto.getSenderId());
-        payment.setTransactionSum(paymentDto.getTransactionSum());
-        payment.setReceiverId(paymentDto.getReceiverId());
-        paymentRepository.save(payment);
+        if (sender.getBalance().compareTo(paymentDto.getTransactionSum()) >= 0) {
+            Payment payment = Payment.builder()
+                .senderId(paymentDto.getSenderId())
+                .receiverId(paymentDto.getReceiverId())
+                .transactionSum(paymentDto.getTransactionSum())
+                .build();
 
-        log.info("[PAYMENT] Send payment {} from {} to {}", paymentDto, sender.getAccountNumber(), receiver.getAccountNumber());
-        amqpTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME, RabbitConfig.ROUTING_KEY, paymentDto);
+            paymentRepository.save(payment);
+
+            log.info("[PAYMENT] Send payment {} from {} to {}", paymentDto, sender.getAccountNumber(), receiver.getAccountNumber());
+            amqpTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME, RabbitConfig.ROUTING_KEY, paymentDto);
+        }
+        else throw new PaymentException(ExceptionMessage.NOT_ENOUGH_BALANCE_ON_ACCOUNT.getMessage());
     }
 }

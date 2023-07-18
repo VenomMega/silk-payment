@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import kz.alibek.core.model.BaseEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Payment extends BaseEntity {
 
   @Column(name = "sender_id")

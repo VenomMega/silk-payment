@@ -1,5 +1,6 @@
 package kz.alibek.customer.controller;
 
+import java.util.List;
 import kz.alibek.customer.model.Client;
 import kz.alibek.customer.model.dto.ClientDto;
 import kz.alibek.customer.service.ClientService;
@@ -26,8 +27,13 @@ public class DefaultClientController implements ClientController {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<Client> findById(Long id) {
+    public ResponseEntity<Client> findById(@PathVariable Long id) {
         return ResponseEntity.ok(clientService.getClientById(id));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<Client>> findAllClients() {
+        return ResponseEntity.ok(clientService.getAllClients());
     }
 
     @Override
@@ -41,7 +47,9 @@ public class DefaultClientController implements ClientController {
     }
 
     @Override
-    public ResponseEntity<Void> delete(Long id) {
-        return null;
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        clientService.deleteClient(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

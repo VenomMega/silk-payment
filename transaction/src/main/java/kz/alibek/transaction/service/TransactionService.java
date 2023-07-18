@@ -18,21 +18,20 @@ public class TransactionService {
     private final CustomerServiceClient customerServiceClient;
 
     public void createTransaction(PaymentDto paymentDto) {
-        Transaction transaction = new Transaction();
 
         Client sender = getClient(paymentDto.getSenderId());
         Client receiver = getClient(paymentDto.getReceiverId());
 
-        transaction.setSenderAccountNumber(sender.getAccountNumber());
-        transaction.setRecieverAccountNumber(receiver.getAccountNumber());
+        Transaction transaction = Transaction.builder()
+            .senderAccountNumber(sender.getAccountNumber())
+            .receiverAccountNumber(receiver.getAccountNumber())
+            .transactionSum(paymentDto.getTransactionSum())
+            .build();
 
-        if (sender.getBalance().compareTo(paymentDto.getTransactionSum()) >= 0){
-            customerServiceClient.updateClientBalance(sender.getId(), sender.getBalance().subtract(paymentDto.getTransactionSum()));
-            customerServiceClient.updateClientBalance(receiver.getId(), receiver.getBalance().add(paymentDto.getTransactionSum()));
+        customerServiceClient.updateClientBalance(sender.getId(), sender.getBalance().subtract(paymentDto.getTransactionSum()));
+        customerServiceClient.updateClientBalance(receiver.getId(), receiver.getBalance().add(paymentDto.getTransactionSum()));
 
-            transactionRepository.save(transaction);
-        }
-        else throw new TransactionException(ExceptionMessage.NOT_ENOUGH_BALANCE_ON_ACCOUNT.getMessage());
+        transactionRepository.save(transaction);
     }
 
     private Client getClient(long id) {
